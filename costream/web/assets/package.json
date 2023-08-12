@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "esbuild": "^0.19.0",
+    "esbuild-vue": "^1.2.2"
+  },
+  "dependencies": {
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "phoenix_live_view": "file:../deps/phoenix_live_view",
+    "vue": "^3.3.4"
+  }
+}
