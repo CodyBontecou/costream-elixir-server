@@ -6,7 +6,8 @@ defmodule JSONParser do
 
     case HTTPoison.get(url, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        parse_response(body)
+        # parse_response(body)
+        decode_nested(body)
 
       {:ok, %HTTPoison.Response{status_code: status_code}} ->
         {:error, "Request failed with status code: #{status_code}"}
@@ -28,48 +29,34 @@ defmodule JSONParser do
     end
   end
 
-  # defp extract_info(%{"data" => %{"schedule" => %{"events" => events}}}) do
-  #   event_details =
-  #     for event <- events do
-  #       %{
-  #         startTime: event["startTime"],
-  #         blockName: event["blockName"],
-  #         match: event["match"],
-  #         state: event["state"],
-  #         type: event["type"],
-  #         league: event["league"],
-  #         streams: event["streams"]
-  #       }
-  #     end
+  def decode_nested(json) when is_binary(json) do
+    case Jason.decode(json) do
+      {:ok, parsed_json} ->
+        decode_nested(parsed_json)
 
-  #   event_details
-  # end
+      {:error, _reason} ->
+        {:error, "Error decoding JSON"}
+    end
+  end
 
-  # defp tomorrows_events(events) do
-  #   tomorrow_iso_date =
-  #     Date.utc_today()
-  #     |> Date.add(1)
+  def decode_nested(%{} = map) do
+    decode_nested_map(map)
+  end
 
-  #   yesterday =
-  #     Date.utc_today()
-  #     |> Date.add(-1)
+  defp decode_nested_map(map) do
+    Enum.reduce(%{}, map, fn {key, value}, acc ->
+      case value do
+        %{} ->
+          new_value = decode_nested_map(value)
+          Map.put(acc, key, new_value)
 
-  #   events
-  #   |> Enum.filter(fn event ->
-  #     case DateTime.from_iso8601(event.startTime) do
-  #       {:ok, datetime, _} ->
-  #         date = DateTime.to_date(datetime)
-  #         comparison_result = Date.compare(date, tomorrow_iso_date)
-  #         comparison_result_ = Date.compare(date, yesterday)
+        _ ->
+          Map.put(acc, key, value)
+      end
+    end)
+  end
 
-  #         # :lt check to make sure it's not tomorrow
-  #         # :gt check to make sure its before today
-  #         comparison_result == :lt && comparison_result_ == :gt
-
-  #       _ ->
-  #         false
-  #     end
-  #   end)
-  #   |> Enum.sort_by(& &1.startTime)
-  # end
+  def decode_nested(_other) do
+    {:error, "Unknown JSON structure"}
+  end
 end
