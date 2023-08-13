@@ -15,33 +15,25 @@ defmodule LeagueInfo do
     end
   end
 
-  def format_info(info) do
-    for %{
-          league: %{
-            "image" => image,
-            "name" => name,
-            "slug" => slug
-          },
-          streams: [
-            %{
-              "locale" => stream_locale,
-              "mediaLocale" => %{"englishName" => media_english_name},
-              "parameter" => stream_parameter,
-              "provider" => stream_provider
-            }
-          ]
-        } <- info do
-      stream_url = generate_stream_url(stream_provider, stream_parameter)
+  def formatted_events(%{"data" => %{"schedule" => %{"events" => events}}}) do
+    Enum.map(events, fn event ->
+      league = event["league"]
+      stream = hd(event["streams"])
+
+      stream_url = generate_stream_url(stream["provider"], stream["parameter"])
+      league_name = league["name"]
+      league_slug = league["slug"]
+      league_image = league["image"]
+      stream_media_locale = stream["mediaLocale"]["englishName"]
 
       %{
-        league_image: image,
-        league_name: name,
-        league_slug: slug,
-        stream_locale: stream_locale,
-        stream_media_locale: media_english_name,
-        stream_url: stream_url
+        stream_url: stream_url,
+        league_name: league_name,
+        league_slug: league_slug,
+        league_image: league_image,
+        stream_media_locale: stream_media_locale
       }
-    end
+    end)
   end
 
   def extract_info(%{"data" => %{"schedule" => %{"events" => events}}}) do

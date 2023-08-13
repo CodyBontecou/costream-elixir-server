@@ -7,18 +7,26 @@ defmodule LeagueInfoTest do
     assert LeagueInfo.generate_stream_url("afreecatv", "test") == "https://www.afreecatv.com/test"
   end
 
-  test "format_info" do
+  test "formatted_events" do
     data = LeagueInfoMocks.get_live()
 
-    [match | _tail] = data
+    actual = [
+      %{
+        stream_url: "https://www.twitch.tv/cblolenglish",
+        league_image: "http://static.lolesports.com/leagues/cblol-logo-symbol-offwhite.png",
+        league_name: "CBLOL",
+        league_slug: "cblol-brazil",
+        stream_media_locale: "English (North America)"
+      },
+      %{
+        stream_url: "https://www.twitch.tv/lcs_challengers",
+        league_image: "http://static.lolesports.com/leagues/1671126518545_NACL23_Icon_WHT1.png",
+        league_name: "LCS Challengers Qualifiers",
+        league_slug: "lcs_challengers_qualifiers",
+        stream_media_locale: "English - ChallengersLeague"
+      }
+    ]
 
-    assert LeagueInfo.format_info(data) == %{
-             league_image: match["league"].image,
-             league_name: match["league"].name,
-             league_slug: match["league"].slug,
-             stream_locale: match.slug,
-             stream_media_locale: "media_english_name",
-             stream_url: "stream_url"
-           }
+    assert LeagueInfo.formatted_events(data) == actual
   end
 end
