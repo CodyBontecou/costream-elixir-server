@@ -53,31 +53,25 @@ defmodule LeagueInfo do
     event_details
   end
 
-  defp tomorrows_events(events) do
-    tomorrow_iso_date =
-      Date.utc_today()
-      |> Date.add(1)
+  def events_in_range(events, start_day, end_day) do
+    start_time = Date.utc_today() |> Date.add(start_day)
+    end_time = Date.utc_today() |> Date.add(end_day)
 
-    yesterday =
-      Date.utc_today()
-      |> Date.add(-1)
-
-    events
-    |> Enum.filter(fn event ->
+    filter_event = fn event ->
       case DateTime.from_iso8601(event.startTime) do
         {:ok, datetime, _} ->
           date = DateTime.to_date(datetime)
-          comparison_result = Date.compare(date, tomorrow_iso_date)
-          comparison_result_ = Date.compare(date, yesterday)
-
-          # :lt check to make sure it's not tomorrow
-          # :gt check to make sure its before today
-          comparison_result == :lt && comparison_result_ == :gt
+          is_before_end = Date.compare(date, end_time) == :lt
+          is_after_start = Date.compare(date, start_time) == :gt
+          is_before_end && is_after_start
 
         _ ->
           false
       end
-    end)
-    |> Enum.sort_by(& &1.startTime)
+    end
+
+    filtered_events = events |> Enum.filter(filter_event)
+    sorted_events = Enum.sort_by(filtered_events, & &1.startTime)
+    sorted_events
   end
 end
