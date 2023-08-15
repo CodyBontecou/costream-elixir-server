@@ -2,6 +2,7 @@ on: push
 
 jobs:
   test:
+    working-directory: lolesports_consumer
     runs-on: ubuntu-latest
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
