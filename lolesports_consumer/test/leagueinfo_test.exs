@@ -37,7 +37,6 @@ defmodule LeagueInfoTest do
     expected = LeagueInfoMocks.events_in_range_failed_datetime_case_expected()
     actual = LeagueInfo.extract_info(data) |> LeagueInfo.events_in_range(-5, 5)
 
-    # assert actual == expected
-    assert false
+    assert actual == expected
   end
 end
