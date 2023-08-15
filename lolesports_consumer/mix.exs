@@ -8,7 +8,8 @@ defmodule LolesportsConsumer.MixProject do
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -23,7 +24,8 @@ defmodule LolesportsConsumer.MixProject do
   defp deps do
     [
       {:httpoison, "~> 2.1"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:excoveralls, "~> 0.13", only: [:test]}
     ]
   end
 
