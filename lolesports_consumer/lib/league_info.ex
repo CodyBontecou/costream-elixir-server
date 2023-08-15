@@ -15,6 +15,8 @@ defmodule LeagueInfo do
     end
   end
 
+  # TODO: hd() is taking the first element of streams
+  # I want all streams, not just the first.
   def formatted_events(%{"data" => %{"schedule" => %{"events" => events}}}) do
     Enum.map(events, fn event ->
       league = event["league"]
