@@ -6,8 +6,8 @@ defaults:
 
 jobs:
   test:
+    name: Elixir tests
     runs-on: ubuntu-latest
-    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
       matrix:
         otp: [26]
