@@ -2,7 +2,6 @@ on: push
 
 jobs:
   test:
-    working-directory: lolesports_consumer
     runs-on: ubuntu-latest
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
@@ -16,6 +15,7 @@ jobs:
       - uses: actions/checkout@v1.0.0
       - uses: erlef/setup-beam@v1
         with:
+          working-directory: lolesports_consumer
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
       - run: mix deps.get
